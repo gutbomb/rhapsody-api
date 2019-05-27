@@ -17,6 +17,6 @@ const appConfig = {
     jwtKey: '', // Change this to the jwt_key you wish to use
     appUrl: '', // Change this to the front end's main URL for the environment you are on
     environment: '', // Change this to 'dev' or 'production'
-    appPort: 3001 // change this to whatever port you set for the api to run on
+    appPort: 3002 // change this to whatever port you set for the api to run on
 };
 module.exports = appConfig;
