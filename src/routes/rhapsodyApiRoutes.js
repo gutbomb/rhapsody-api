@@ -39,9 +39,45 @@ module.exports = function(app) {
     .get(resetPasswordController.reset_password);
 
     app.route('/api/colorways')
-    .get(colorwaysController.get_colorways);
+        .post(colorwaysController.add_colorway)
+        .get(colorwaysController.get_colorways)
+        .put(colorwaysController.update_colorway)
+        .delete(colorwaysController.delete_colorway);
+
+    app.route('/api/colorways/:colorway_id')
+        .delete(colorwaysController.delete_colorway);
+
+    app.route('/api/colorway-categories')
+        .post(colorwaysController.add_colorway_category)
+        .get(colorwaysController.get_colorway_categories)
+        .put(colorwaysController.update_colorway_category);
+
+    app.route('/api/colorway-categories/:colorway_category_id')
+        .delete(colorwaysController.delete_colorway_category);
+
+    app.route('/api/colorway-image')
+        .post(colorwaysController.add_colorway_image)
+        .put(colorwaysController.update_colorway_image);
+
+    app.route('/api/colorway-image/:colorway_image_id')
+        .delete(colorwaysController.delete_colorway_image);
+
+    app.route('/api/upload-colorway-image')
+        .post(colorwaysController.upload_colorway_image);
 
     app.route('/api/articles/:tab')
-    .get(articlesController.get_article);
+        .get(articlesController.get_article)
+        .put(articlesController.update_article);
 
+    app.route('/api/articles')
+        .get(articlesController.get_articles);
+
+    app.route('/api/article-image')
+        .post(articlesController.upload_image);
+
+    app.route('/api/article-image/:filename')
+        .get(articlesController.display_image);
+
+    app.route('/api/colorway-image/:filename')
+        .get(colorwaysController.get_colorway_image);
 };

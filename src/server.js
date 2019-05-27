@@ -10,6 +10,8 @@ var express = require('express'),
 
 
 
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
@@ -21,7 +23,7 @@ app.use(function(req, res, next) {
 app.use(bearerToken());
 
 
-var routes = require('./routes/skeletonApiRoutes');
+var routes = require('./routes/rhapsodyApiRoutes');
 routes(app);
 
 app.listen(port);
