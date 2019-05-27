@@ -85,12 +85,18 @@ exports.update_article = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
         let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let articleUpdateQuery = `UPDATE articles SET article_title = '${req.body.article_title}', article_subtitle = '${req.body.article_subtitle}', article_date = NOW(), article_content = '${req.body.article_content}', article_image_filename = '${req.body.article_image_filename}', article_image_class = '${req.body.article_image_class}' WHERE article_tab = '${req.body.article_tab}'`;
+            let filename;
+            if(req.body.article_image_filename===null){
+                filename = req.body.article_image_filename;
+            } else {
+                filename = `'${req.body.article_image_filename}'`;
+            }
+            let articleUpdateQuery = `UPDATE articles SET article_title = '${req.body.article_title}', article_subtitle = '${req.body.article_subtitle}', article_date = NOW(), article_content = '${req.body.article_content}', article_image_filename = ${filename}, article_image_class = '${req.body.article_image_class}' WHERE article_tab = '${req.body.article_tab}'`;
             database.query(articleUpdateQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
                 } else {
-                    return res.json({'status': 'User updated successfully'});
+                    return res.json({'status': 'Article updated successfully'});
                 }
             });
         } else {
