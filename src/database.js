@@ -3,7 +3,7 @@ const appConfig = require('./appConfig.js'),
 
 module.exports = class Database {
     constructor() {
-        this.connection = mysql.createConnection( appConfig.dbConnect );
+        this.connection = mysql.createPool( appConfig.dbConnect );
     }
     query( sql, args ) {
         return new Promise( ( resolve, reject ) => {
@@ -23,4 +23,4 @@ module.exports = class Database {
             } );
         } );
     }
-}
+};

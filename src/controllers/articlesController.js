@@ -1,4 +1,5 @@
 const Database = require('../database.js'),
+    database = new Database(),
     appConfig = require('../appConfig'),
     jwt = require('jsonwebtoken'),
     verifyToken = require('../verifyToken.js'),
@@ -15,12 +16,11 @@ const Database = require('../database.js'),
     upload = multer({ //multer settings
         storage: storage
     }).single('file'),
-    path = require('path'),
-    database = new Database();
+    path = require('path');
 
 
 exports.get_article = function(req, res) {
-    let articleQuery = "select articles.*, user_first_name, user_last_name from articles JOIN users ON article_author = user_id WHERE article_tab = '" + req.params.tab + "'";
+    let articleQuery = `select articles.*, user_first_name, user_last_name from articles JOIN users ON article_author = user_id WHERE article_tab = '${req.params.tab}'`;
 
     database.query(articleQuery)
         .then((rows) => {
@@ -45,7 +45,7 @@ exports.get_articles = function(req, res) {
 
 exports.upload_image = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
             upload(req,res,function(err){
                 if(err){
@@ -83,9 +83,9 @@ exports.display_image = function(req, res) {
 
 exports.update_article = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let articleUpdateQuery = "UPDATE articles SET article_title = '"+req.body.article_title+"', article_subtitle = '"+req.body.article_subtitle+"', article_date = NOW(), article_content = '"+req.body.article_content+"', article_image_filename = '"+req.body.article_image_filename+"', article_image_class = '"+req.body.article_image_class+"' WHERE article_tab = '"+req.body.article_tab+"'";
+            let articleUpdateQuery = `UPDATE articles SET article_title = '${req.body.article_title}', article_subtitle = '${req.body.article_subtitle}', article_date = NOW(), article_content = '${req.body.article_content}', article_image_filename = '${req.body.article_image_filename}', article_image_class = '${req.body.article_image_class}' WHERE article_tab = '${req.body.article_tab}'`;
             database.query(articleUpdateQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});

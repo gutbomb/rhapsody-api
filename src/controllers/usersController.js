@@ -1,6 +1,6 @@
-var mysql = require('mysql'),
+const Database = require('../database.js'),
+    database = new Database(),
     appConfig = require('../appConfig.js'),
-    connection = mysql.createConnection(appConfig.dbConnect),
     passwordHash = require('password-hash'),
     jwt = require('jsonwebtoken'),
     verifyToken = require('../verifyToken.js'),
@@ -8,38 +8,37 @@ var mysql = require('mysql'),
     transporter = nodemailer.createTransport(appConfig.mailConfig);
 
 exports.get_users = function(req, res) {
-    var whereClause='';
+    let whereClause='';
     if (typeof(req.params)!=='undefined'){
         if (typeof(req.params.userId)!=='undefined') {
             whereClause=' WHERE user_id='+req.params.userId;
         }
     }
 
-    var usersQuery = 'SELECT user_id, user_email, user_first_name, user_last_name, password_mustchange, user_level, last_login_time, user_created_time, user_email_validated FROM users'+whereClause+' ORDER BY user_email';
+    let usersQuery = `SELECT user_id, user_email, user_first_name, user_last_name, password_mustchange, user_level, last_login_time, user_created_time, user_email_validated FROM users ${whereClause} ORDER BY user_email`;
 
-    connection.query(usersQuery, function (err, users) {
-        if (err || !users || !users.length) {
-            return res.sendStatus(404);
-        } else {
-            return res.json(users);
-        }
-    });
+    database.query(usersQuery)
+        .then((rows) => {
+            return res.json(rows);
+        }, (err) => {
+            return res.status(404).json(err);
+        })
 };
 
 exports.sign_up = function(req, res) {
-    var userQuery = 'SELECT user_email FROM users WHERE user_email=\'' + req.body.email + '\'';
-    connection.query(userQuery, function (err, user) {
+    let userQuery = `SELECT user_email FROM users WHERE user_email='${req.body.email}'`;
+    database.query(userQuery, function (err, user) {
         if (err) {
             return res.status(500).json({'status': 'Database error'});
         } else {
             if (!user || !user.length) {
-                var validationString=Math.random().toString(36).substr(2, 16);
-                var addUserQuery = 'INSERT INTO users (user_first_name, user_last_name, user_email, user_level, password_mustchange, user_password, user_email_validated, user_validation_string) VALUES (\'' + req.body.user_first_name + '\', \'' + req.body.user_last_name + '\', \'' + req.body.email + '\', \'user\', 0, \'' + passwordHash.generate(req.body.user_password) + '\', 0, \''+validationString+'\')';
-                connection.query(addUserQuery, function (err) {
+                let validationString=Math.random().toString(36).substr(2, 16);
+                let addUserQuery = `INSERT INTO users (user_first_name, user_last_name, user_email, user_level, password_mustchange, user_password, user_email_validated, user_validation_string) VALUES ('${req.body.user_first_name}', '${req.body.user_last_name}', '${req.body.email}', 'user', 0, '${passwordHash.generate(req.body.user_password)}', 0, '${validationString}')`;
+                database.query(addUserQuery, function (err) {
                     if (err) {
                         return res.status(500).json({'status': 'Database error', 'errors': err, 'sql': addUserQuery});
                     } else {
-                        var mailOptions = {
+                        let mailOptions = {
                             from: appConfig.mailConfig.auth.user,
                             to: req.body.email,
                             subject: 'Skeleton - New Account',
@@ -58,21 +57,21 @@ exports.sign_up = function(req, res) {
 
 exports.add_user = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            var userQuery = 'SELECT user_email FROM users WHERE user_email=\'' + req.body.email + '\'';
-            connection.query(userQuery, function (err, user) {
+            let userQuery = `SELECT user_email FROM users WHERE user_email='${req.body.email}'`;
+            database.query(userQuery, function (err, user) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
                 } else {
                     if (!user || !user.length) {
-                        var newPassword=Math.random().toString(36).substr(2, 8);
-                        var addUserQuery = 'INSERT INTO users (user_first_name, user_last_name, user_email, user_level, password_mustchange, user_password, user_email_validated, user_validation_string) VALUES (\'' + req.body.user_first_name + '\', \'' + req.body.user_last_name + '\', \'' + req.body.email + '\', \'' + req.body.user_level + '\', 1, \'' + passwordHash.generate(newPassword) + '\', 1, \'\')';
-                        connection.query(addUserQuery, function (err) {
+                        let newPassword=Math.random().toString(36).substr(2, 8);
+                        let addUserQuery = `INSERT INTO users (user_first_name, user_last_name, user_email, user_level, password_mustchange, user_password, user_email_validated, user_validation_string) VALUES ('${req.body.user_first_name}', '${req.body.user_last_name}', '${req.body.email}', '${req.body.user_level}', 1, '${passwordHash.generate(newPassword)}', 1, '')`;
+                        database.query(addUserQuery, function (err) {
                             if (err) {
                                 return res.status(500).json({'status': 'Database error'});
                             } else {
-                                var mailOptions = {
+                                let mailOptions = {
                                     from: 'gutbomb@gmail.com',
                                     to: req.body.email,
                                     subject: 'Rhapsody Fiber Arts - New Account',
@@ -98,11 +97,11 @@ exports.add_user = function(req, res) {
 
 exports.update_user = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.id === req.params.userId || decodedToken.userLevel === 'admin') {
 
-            var updateUserQuery = 'UPDATE users SET user_first_name=\'' + req.body.user_first_name + '\', user_last_name=\'' + req.body.user_last_name + '\', user_email=\'' + req.body.user_email + '\', user_level=\'' + req.body.user_level + '\' WHERE user_id=' + req.params.userId;
-            connection.query(updateUserQuery, function (err) {
+            let updateUserQuery = `UPDATE users SET user_first_name='${req.body.user_first_name}', user_last_name='${req.body.user_last_name}', user_email='${req.body.user_email}', user_level='${req.body.user_level}' WHERE user_id=${req.params.userId}`;
+            database.query(updateUserQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
                 } else {
@@ -119,10 +118,10 @@ exports.update_user = function(req, res) {
 
 exports.delete_user = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            var deleteUserQuery='DELETE FROM users WHERE user_id='+req.params.userId;
-            connection.query(deleteUserQuery, function (err) {
+            let deleteUserQuery=`DELETE FROM users WHERE user_id=${req.params.userId}`;
+            database.query(deleteUserQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
                 } else {
@@ -138,8 +137,8 @@ exports.delete_user = function(req, res) {
 };
 
 exports.validate_user = function (req, res) {
-    var userQuery = 'SELECT user_email_validated FROM users WHERE user_validation_string=\'' + req.params.userValidationString + '\'';
-    connection.query(userQuery, function (err, user) {
+    let userQuery = `SELECT user_email_validated FROM users WHERE user_validation_string='${req.params.userValidationString}'`;
+    database.query(userQuery, function (err, user) {
         if (err) {
             return res.status(500).json({'status': 'Database error', 'errors': err});
         } else {
@@ -147,8 +146,8 @@ exports.validate_user = function (req, res) {
                 return res.status(404).json({'status': 'User not found'});
             } else {
                 if (user[0].user_email_validated === 0) {
-                    var validateUserQuery = 'UPDATE users SET user_email_validated = 1 WHERE user_validation_string=\''+req.params.userValidationString+'\'';
-                    connection.query(validateUserQuery, function (err) {
+                    let validateUserQuery = `UPDATE users SET user_email_validated = 1 WHERE user_validation_string='${req.params.userValidationString}'`;
+                    database.query(validateUserQuery, function (err) {
                         if (err) {
                             return res.status(500).json({'status': 'Database error'});
                         } else {
@@ -164,15 +163,15 @@ exports.validate_user = function (req, res) {
 };
 
 exports.resend_validation = function (req, res) {
-    var userQuery = 'SELECT user_email_validated, user_first_name, user_last_name, user_validation_string FROM users WHERE user_email=\'' + req.params.userEmail + '\'';
-    connection.query(userQuery, function (err, user) {
+    let userQuery = `SELECT user_email_validated, user_first_name, user_last_name, user_validation_string FROM users WHERE user_email='${req.params.userEmail}'`;
+    database.query(userQuery, function (err, user) {
         if (err) {
             return res.status(500).json({'status': 'Database error', 'errors': err});
         } else {
             if (!user || !user.length) {
                 return res.status(404).json({'status': 'User not found'});
             } else {
-                var mailOptions = {
+                let mailOptions = {
                     from: appConfig.mailConfig.auth.user,
                     to: req.params.userEmail,
                     subject: 'Skeleton - New Account',

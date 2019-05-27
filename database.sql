@@ -57,7 +57,7 @@ CREATE TABLE `colorway_categories` (
   `colorway_category_id` int(11) NOT NULL AUTO_INCREMENT,
   `colorway_category_name` varchar(255) NOT NULL,
   PRIMARY KEY (`colorway_category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +82,7 @@ CREATE TABLE `colorway_images` (
   `colorway_image_filename` varchar(255) NOT NULL,
   `colorway_id` int(11) NOT NULL,
   PRIMARY KEY (`colorway_image_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,7 +91,7 @@ CREATE TABLE `colorway_images` (
 
 LOCK TABLES `colorway_images` WRITE;
 /*!40000 ALTER TABLE `colorway_images` DISABLE KEYS */;
-INSERT INTO `colorway_images` VALUES (1,'Switzerland.png',1),(2,'Samantha.png',2),(3,'Switzerland_2.jpg',1),(4,'Switzerland_1.jpg',1),(5,'Samantha_1.jpg',2),(6,'Samantha_2.png',2),(7,'Elliot.png',3),(8,'Elliot_1.jpg',3);
+INSERT INTO `colorway_images` VALUES (17,'Switzerland.png',1),(18,'Switzerland_2.jpg',1),(19,'Switzerland_1.jpg',1),(20,'Samantha.png',2),(21,'Samantha_1.jpg',2),(22,'Samantha_2.png',2),(23,'Elliot.png',3),(24,'Elliot_1.jpg',3),(25,'PBJ.png',4),(26,'PBJ.jpg',4),(27,'Across_the_Night.png',5),(28,'Across_the_Night_1.jpg',5),(29,'Cranberry_Bog.png',6),(30,'Cranberry_Bog_1.jpg',6),(31,'Cranberry_Bog_2.jpg',6),(32,'Dark_Army.png',7),(33,'Dark_Army_1.jpg',7),(34,'American_Steampunk.png',8),(35,'American_Steampunk_1.jpg',8),(36,'fsociety.png',9),(37,'Darlene.png',10),(38,'Darlene_1.jpg',10),(39,'Harvest_Moon.png',11),(40,'Harvest_Moon_1.jpg',11),(41,'Harvest_Moon_2.png',11),(42,'White_Rose.png',12),(43,'White_Rose_1.jpg',12),(44,'La_Vie_en_Rose.png',13),(45,'La_Vie_en_Rose_1.jpg',13),(46,'La_Vie_en_Rose_2.jpg',13),(47,'Twilight_Sage.png',14),(48,'Twilight_Sage_1.jpg',14),(49,'Twilight_Sage_2.jpg',14),(50,'Salmon_Run.png',15),(51,'Salmon_Run.jpg',15),(54,'Degas.png',16),(55,'Degas_1.jpg',16);
 /*!40000 ALTER TABLE `colorway_images` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,7 +107,7 @@ CREATE TABLE `colorways` (
   `colorway_name` varchar(255) NOT NULL,
   `colorway_category_id` int(11) NOT NULL,
   PRIMARY KEY (`colorway_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,7 +140,7 @@ CREATE TABLE `users` (
   `user_email_validated` int(11) NOT NULL DEFAULT '0',
   `user_validation_string` varchar(255) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +149,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Lauren','laurenkp@byu.net','sha1$9879001b$1$40367b3a0e948438227af7fc96f2d4251fa32ba4',0,'admin','2019-05-26 19:17:15','2017-07-06 18:53:06','Palmer-Merrill',1,''),(8,'Jason','jasonrmerrill@icloud.com','sha1$d235c8a6$1$ee943d68c34de427f8266e6cc1beba07ba06b73b',0,'admin','2019-05-26 19:18:46','2019-05-26 19:17:36','Merrill',1,'');
+INSERT INTO `users` VALUES (1,'Lauren','laurenkp@byu.net','sha1$9879001b$1$40367b3a0e948438227af7fc96f2d4251fa32ba4',0,'admin','2019-05-26 19:17:15','2017-07-06 18:53:06','Palmer-Merrill',1,''),(8,'Jason','jasonrmerrill@icloud.com','sha1$d8316dab$1$cfd5ef840c0574d1c22b0481e8558ce0a179a2c9',0,'admin','2019-05-27 17:12:23','2019-05-26 19:17:36','Merrill',1,'');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -162,4 +162,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-27  2:00:16
+-- Dump completed on 2019-05-27 17:16:10

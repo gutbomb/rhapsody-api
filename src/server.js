@@ -1,11 +1,9 @@
-var express = require('express'),
+const express = require('express'),
     app = express(),
-    port = process.env.PORT || 3001,
-    bodyParser = require('body-parser'),
-    bearerToken = require('express-bearer-token'),
-    nodemailer = require('nodemailer'),
     appConfig = require('./appConfig.js'),
-    transporter = nodemailer.createTransport(appConfig.mailConfig);
+    port = appConfig.appPort,
+    bodyParser = require('body-parser'),
+    bearerToken = require('express-bearer-token');
 
 
 
@@ -23,7 +21,7 @@ app.use(function(req, res, next) {
 app.use(bearerToken());
 
 
-var routes = require('./routes/rhapsodyApiRoutes');
+const routes = require('./routes/rhapsodyApiRoutes');
 routes(app);
 
 app.listen(port);

@@ -1,12 +1,12 @@
 'use strict';
 module.exports = function(app) {
-    var accountController = require('../controllers/accountController');
-    var authController = require('../controllers/authController');
-    var changePasswordController = require('../controllers/changePasswordController');
-    var resetPasswordController = require('../controllers/resetPasswordController');
-    var usersController = require('../controllers/usersController');
-    var colorwaysController = require('../controllers/colorwaysController');
-    var articlesController = require('../controllers/articlesController');
+    const accountController = require('../controllers/accountController'),
+        authController = require('../controllers/authController'),
+        changePasswordController = require('../controllers/changePasswordController'),
+        resetPasswordController = require('../controllers/resetPasswordController'),
+        usersController = require('../controllers/usersController'),
+        colorwaysController = require('../controllers/colorwaysController'),
+        articlesController = require('../controllers/articlesController');
 
     app.route('/api/auth')
     .post(authController.login);
@@ -49,7 +49,6 @@ module.exports = function(app) {
 
     app.route('/api/colorway-categories')
         .post(colorwaysController.add_colorway_category)
-        .get(colorwaysController.get_colorway_categories)
         .put(colorwaysController.update_colorway_category);
 
     app.route('/api/colorway-categories/:colorway_category_id')

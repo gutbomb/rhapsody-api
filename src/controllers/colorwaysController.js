@@ -1,4 +1,5 @@
 const Database = require('../database.js'),
+    database = new Database(),
     appConfig = require('../appConfig'),
     jwt = require('jsonwebtoken'),
     verifyToken = require('../verifyToken.js'),
@@ -6,7 +7,7 @@ const Database = require('../database.js'),
     multer = require('multer'),
     storage = multer.diskStorage({ //multers disk storage settings
         destination: function (req, file, cb) {
-            cb(null, './article-images/')
+            cb(null, './colorway-images/')
         },
         filename: function (req, file, cb) {
             cb(null, file.originalname)
@@ -15,8 +16,7 @@ const Database = require('../database.js'),
     upload = multer({ //multer settings
         storage: storage
     }).single('file'),
-    path = require('path'),
-    database = new Database();
+    path = require('path');
 
 
 exports.get_colorways = function(req, res) {
@@ -71,9 +71,9 @@ exports.get_colorways = function(req, res) {
 
 exports.add_colorway = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let addColorwayQuery = "INSERT INTO colorways (colorway_name, colorway_category_id) VALUES ('" + req.body.colorway_name + "', " + req.body.colorway_category_id + ")";
+            let addColorwayQuery = `INSERT INTO colorways (colorway_name, colorway_category_id) VALUES ('${req.body.colorway_name}', ${req.body.colorway_category_id})`;
             database.query(addColorwayQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
@@ -91,9 +91,9 @@ exports.add_colorway = function(req, res) {
 
 exports.update_colorway = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let updateColorwayQuery = "UPDATE colorways SET colorway_name = '"+req.body.colorway_name+"', colorway_category_id = "+req.body.colorway_category_id+" WHERE colorway_id = "+req.body.colorway_id;
+            let updateColorwayQuery = `UPDATE colorways SET colorway_name = '${req.body.colorway_name}', colorway_category_id = ${req.body.colorway_category_id} WHERE colorway_id = ${req.body.colorway_id}`;
             database.query(updateColorwayQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
@@ -111,9 +111,9 @@ exports.update_colorway = function(req, res) {
 
 exports.delete_colorway = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let deleteColorwayQuery = "DELETE FROM colorways WHERE colorway_id = "+req.params.colorway_id+"; DELETE FROM colorway_images WHERE colorway_id = "+req.params.colorway_id+";";
+            let deleteColorwayQuery = `DELETE FROM colorways WHERE colorway_id = ${req.params.colorway_id}; DELETE FROM colorway_images WHERE colorway_id = ${req.params.colorway_id};`;
             database.query(deleteColorwayQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
@@ -131,9 +131,9 @@ exports.delete_colorway = function(req, res) {
 
 exports.add_colorway_category = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let addColorwayCategoryQuery = "INSERT INTO colorway_categories (colorway_category_name) VALUES ('"+req.body.colorway_name+"')";
+            let addColorwayCategoryQuery = `INSERT INTO colorway_categories (colorway_category_name) VALUES ('${req.body.colorway_category_name}')`;
             database.query(addColorwayCategoryQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
@@ -149,21 +149,11 @@ exports.add_colorway_category = function(req, res) {
     }
 };
 
-exports.get_colorway_categories = function(req, res) {
-    let colorwayCategoriesQuery = "select * from colorway_categories";
-    database.query(colorwayCategoriesQuery)
-        .then((rows) => {
-            return res.json(rows);
-        }, () => {
-            return res.sendStatus(404);
-        })
-};
-
 exports.update_colorway_category = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let updateColorwayCategoryQuery = "UPDATE colorway_categories SET colorway_category_name = '"+req.body.colorway_category_name+"' WHERE colorway_category_id = "+req.body.colorway_category_id;
+            let updateColorwayCategoryQuery = `UPDATE colorway_categories SET colorway_category_name = '${req.body.colorway_category_name}' WHERE colorway_category_id = ${req.body.colorway_category_id}`;
             database.query(updateColorwayCategoryQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
@@ -181,9 +171,9 @@ exports.update_colorway_category = function(req, res) {
 
 exports.delete_colorway_category = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let deleteColorwayCategoryQuery = "DELETE a FROM colorway_images a INNER JOIN colorways b ON a.colorway_id=b.colorway_id WHERE b.colorway_category_id = " + req.params.colorway_category_id + "; DELETE FROM colorways WHERE colorway_category_id = " + req.params.colorway_category_id + "; DELETE FROM colorway_categories WHERE colorway_category_id = "+ req.params.colorway_category_id +";";
+            let deleteColorwayCategoryQuery = `DELETE a FROM colorway_images a INNER JOIN colorways b ON a.colorway_id=b.colorway_id WHERE b.colorway_category_id = ${req.params.colorway_category_id}; DELETE FROM colorways WHERE colorway_category_id = ${req.params.colorway_category_id}; DELETE FROM colorway_categories WHERE colorway_category_id = ${req.params.colorway_category_id};`;
             database.query(deleteColorwayCategoryQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
@@ -201,9 +191,9 @@ exports.delete_colorway_category = function(req, res) {
 
 exports.add_colorway_image = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let addColorwayImageQuery = "INSERT INTO colorway_images (colorway_image_filename, colorway_id) VALUES ('" + req.body.colorway_image_filename + "', " + req.body.colorway_id + ")";
+            let addColorwayImageQuery = `INSERT INTO colorway_images (colorway_image_filename, colorway_id) VALUES ('${req.body.colorway_image_filename}', ${req.body.colorway_id})`;
             database.query(addColorwayImageQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
@@ -239,9 +229,9 @@ exports.get_colorway_image = function(req, res) {
 
 exports.update_colorway_image = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let updateColorwayQuery = "UPDATE colorway_images SET colorway_image_filename = '"+req.body.colorway_image_filename+"' WHERE colorway_id = "+req.body.colorway_image_id;
+            let updateColorwayQuery = `UPDATE colorway_images SET colorway_image_filename = '${req.body.colorway_image_filename}' WHERE colorway_id = ${req.body.colorway_image_id}`;
             database.query(updateColorwayQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
@@ -259,7 +249,7 @@ exports.update_colorway_image = function(req, res) {
 
 exports.upload_colorway_image = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
             upload(req,res,function(err){
                 if(err){
@@ -279,9 +269,9 @@ exports.upload_colorway_image = function(req, res) {
 
 exports.delete_colorway_image = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-        var decodedToken = jwt.decode(req.token);
+        let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let deleteColorwayImageQuery = "DELETE FROM colorway_images WHERE colorway_image_id = "+req.params.colorway_image_id+";";
+            let deleteColorwayImageQuery = `DELETE FROM colorway_images WHERE colorway_image_id = ${req.params.colorway_image_id};`;
             database.query(deleteColorwayImageQuery, function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});

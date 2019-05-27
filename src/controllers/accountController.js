@@ -1,17 +1,15 @@
-var mysql = require('mysql'),
+const Database = require('../database.js'),
+    database = new Database(),
     appConfig = require('../appConfig.js'),
-    connection = mysql.createConnection(appConfig.dbConnect),
-    passwordHash = require('password-hash'),
     jwt = require('jsonwebtoken'),
-    verifyToken = require('../verifyToken.js'),
-    nodemailer = require('nodemailer'),
-    transporter = nodemailer.createTransport(appConfig.mailConfig);
+    verifyToken = require('../verifyToken.js');
+
 
 exports.update_account = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
-    var decodedToken = jwt.decode(req.token);
-    var updateUserQuery = 'UPDATE users SET user_first_name=\'' + req.body.user_first_name + '\', user_last_name=\'' + req.body.user_last_name + '\', user_email=\'' + req.body.user_email + '\' WHERE user_id=' + decodedToken.id;
-        connection.query(updateUserQuery, function (err) {
+    let decodedToken = jwt.decode(req.token);
+    let updateUserQuery = `UPDATE users SET user_first_name='${req.body.user_first_name}', user_last_name='${req.body.user_last_name}', user_email='${req.body.user_email}' WHERE user_id=${decodedToken.id}`;
+        database.query(updateUserQuery, function (err) {
             if (err) {
                 return res.status(500).json({'status': 'Database error', 'errors': err});
             } else {
