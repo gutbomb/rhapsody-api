@@ -1,12 +1,15 @@
 const express = require('express'),
+    https = require('https'),
     app = express(),
+    fs = require('fs'),
     appConfig = require('./appConfig.js'),
     port = appConfig.appPort,
     bodyParser = require('body-parser'),
-    bearerToken = require('express-bearer-token');
-
-
-
+    bearerToken = require('express-bearer-token'),
+    sslOptions = {
+        key: fs.readFileSync(appConfig.sslOptions.key),
+	cert: fs.readFileSync(appConfig.sslOptions.cert)
+    };
 
 
 
@@ -21,8 +24,14 @@ app.use(function(req, res, next) {
 app.use(bearerToken());
 
 
+
 const routes = require('./routes/rhapsodyApiRoutes');
 routes(app);
 
-app.listen(port);
-console.log('rhapsody RESTful API server started on: ' + port);
+if(appConfig.useSSL) {
+    https.createServer(sslOptions, app).listen(port);
+    console.log('secure rhapsody RESTful API server started on: ' + port);
+} else {
+    app.listen(port);
+    console.log('rhapsody RESTful API server started on: ' + port);
+}
