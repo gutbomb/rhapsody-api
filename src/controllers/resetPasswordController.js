@@ -19,12 +19,12 @@ exports.reset_password = function(req, res) {
                     return res.sendStatus(500);
                 } else {
                     let mailOptions = {
-                        from: 'gutbomb@gmail.com',
+                        from: 'jasonrmerrill@icloud.com',
                         to: req.params.userEmail,
                         subject: 'Rhapsody Fiber Arts Password Reset',
                         text: 'Hello '+user[0].user_first_name+' '+user[0].user_last_name+',\n\rYour password has been reset to \''+newPassword+'\'.  Please visit http://rhapsodyfiber.com/admin/login to log in.'
                     };
-                    transporter.sendMail(mailOptions, function(){});
+                    transporter.sendMail(mailOptions, () => {}, (e) => {console.error(e)});
                     return res.json({'status': 'password changed successfully'})
                 }
             });
