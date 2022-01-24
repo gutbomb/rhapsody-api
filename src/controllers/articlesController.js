@@ -7,7 +7,7 @@ const Database = require('../database.js'),
     multer = require('multer'),
     storage = multer.diskStorage({ //multers disk storage settings
         destination: function (req, file, cb) {
-            cb(null, './article-images/')
+            cb(null, appConfig.serverPath + '/article-images/')
         },
         filename: function (req, file, cb) {
             cb(null, file.originalname)
@@ -70,7 +70,7 @@ exports.display_image = function(req, res) {
     } else {
         fileType=path.extname(req.params.filename).replace('.', '');
     }
-    fs.readFile('./article-images/'+req.params.filename, (err, data) => {
+    fs.readFile(appConfig.serverPath + '/article-images/'+req.params.filename, (err, data) => {
         if (err) {
             res.sendStatus(404);
         } else {
