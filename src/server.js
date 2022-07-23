@@ -5,11 +5,14 @@ const express = require('express'),
     appConfig = require('./appConfig.js'),
     port = appConfig.appPort,
     bodyParser = require('body-parser'),
-    bearerToken = require('express-bearer-token'),
-    sslOptions = {
+    bearerToken = require('express-bearer-token');
+    
+if(appConfig.useSSL) {
+    const sslOptions = {
         key: fs.readFileSync(appConfig.sslOptions.key),
-	cert: fs.readFileSync(appConfig.sslOptions.cert)
+        cert: fs.readFileSync(appConfig.sslOptions.cert)
     };
+}
 
 
 
