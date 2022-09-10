@@ -19,7 +19,7 @@ const appConfig = {
     environment: '', // Change this to 'dev' or 'production'
     useSSL: false, // change this to true to use SSL
     appPort: 3002, // change this to whatever port you set for the api to run on
-    serverPath: 'c:/xampp/www/rhapsody-api/src/',
+    serverPath: 'c:/xampp/www/rhapsody-api/',
     sslOptions: {
         key: '', // change this to the path and filename of your key file
         cert: '' // change this to the path and filename of your certificate

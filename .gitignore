@@ -1,9 +1,10 @@
-src/node_modules/
-src/daemon/
+node_modules/
+daemon/
 .git/
 .idea/
 .DS_Store
-src/npm-debug.log
-src/appConfig.js
-src/package-lock.json
+npm-debug.log
+appConfig.js
+package-lock.json
 rhapsody-api.iml
+docker-compose.yml
