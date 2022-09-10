@@ -31,10 +31,15 @@ app.use(bearerToken());
 const routes = require('./routes/rhapsodyApiRoutes');
 routes(app);
 
-if(appConfig.useSSL) {
-    https.createServer(sslOptions, app).listen(port);
-    console.log('secure rhapsody API server started on: ' + port);
+if(appConfig.environment === 'production') {
+    app.listen();
+    console.log('rhapsody API server started');
 } else {
-    app.listen(port);
-    console.log('rhapsody API server started on: ' + port);
+    if(appConfig.useSSL) {
+        https.createServer(sslOptions, app).listen(port);
+        console.log('secure rhapsody API server started on: ' + port);
+    } else {
+        app.listen(port);
+        console.log('rhapsody API server started on: ' + port);
+    }
 }

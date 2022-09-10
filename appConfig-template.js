@@ -8,18 +8,22 @@ const appConfig = {
         multipleStatements: true // Leave this alone
     },
     mailConfig: {
-        service: 'gmail',
+        host: '',
+        port: 465,
         auth: {
-            user: 'your@gmail.com', // Change this to the gmail username
-            pass: 'yourpassword' // Change this to the gmail password
-        }
+          user: '',
+          pass: '',
+        },
+        secure: true,
+        logger: true,
+        debug: true,
     },
     jwtKey: '', // Change this to the jwt_key you wish to use
     appUrl: '', // Change this to the front end's main URL for the environment you are on
     environment: '', // Change this to 'dev' or 'production'
     useSSL: false, // change this to true to use SSL
     appPort: 3002, // change this to whatever port you set for the api to run on
-    serverPath: 'c:/xampp/www/rhapsody-api/',
+    serverPath: '', //change this to whatever path the app.js is in
     sslOptions: {
         key: '', // change this to the path and filename of your key file
         cert: '' // change this to the path and filename of your certificate
