@@ -1,5 +1,4 @@
-const Database = require('../database.js'),
-    database = new Database(),
+const database = require('../database.js'),
     appConfig = require('../appConfig'),
     jwt = require('jsonwebtoken'),
     verifyToken = require('../verifyToken.js'),
@@ -20,27 +19,43 @@ const Database = require('../database.js'),
 
 
 exports.get_article = function(req, res) {
-    let articleQuery = `select articles.*, user_first_name, user_last_name from articles JOIN users ON article_author = user_id WHERE article_tab = '${req.params.tab}'`;
+    let articleQuery = 'select articles.*, user_first_name, user_last_name from articles JOIN users ON article_author = user_id WHERE article_tab = ?';
 
-    database.query(articleQuery)
-        .then((rows) => {
+    database.execute(articleQuery, [req.params.tab], function(err, rows, fields) {
+        if(err) {
+            console.error(err);
+
+            return res.sendStatus(500);
+        } else {
             if(rows.length) {
-                return res.json(rows);
+
+                return res.json(rows[0]);
+            } else {
+
+                return res.sendStatus(404);
             }
-        }, () => {
-            return res.sendStatus(404);
-        });
+        } 
+    });
 };
 
 exports.get_articles = function(req, res) {
-    let articlesQuery = "select articles.*, user_first_name, user_last_name from articles JOIN users ON article_author = user_id";
+    let articlesQuery = 'select articles.*, user_first_name, user_last_name from articles JOIN users ON article_author = user_id';
 
-    database.query(articlesQuery)
-        .then((rows) => {
-            return res.json(rows);
-        }, () => {
-            return res.sendStatus(404);
-        });
+    database.execute(articlesQuery, [], function(err, rows, fields) {
+        if(err) {
+            console.error(err);
+
+            return res.sendStatus(500);
+        } else {
+            if(rows.length) {
+
+                return res.json(rows);
+            } else {
+
+                return res.sendStatus(404);
+            }
+        } 
+    });
 };
 
 exports.upload_image = function(req, res) {
@@ -85,14 +100,8 @@ exports.update_article = function(req, res) {
     if(verifyToken(req.token, appConfig.jwtKey)) {
         let decodedToken = jwt.decode(req.token);
         if (decodedToken.userLevel==='admin') {
-            let filename;
-            if(req.body.article_image_filename===null){
-                filename = req.body.article_image_filename;
-            } else {
-                filename = `'${req.body.article_image_filename}'`;
-            }
-            let articleUpdateQuery = `UPDATE articles SET article_title = '${req.body.article_title}', article_subtitle = '${req.body.article_subtitle}', article_date = NOW(), article_content = '${req.body.article_content}', article_image_filename = ${filename}, article_image_class = '${req.body.article_image_class}' WHERE article_tab = '${req.body.article_tab}'`;
-            database.query(articleUpdateQuery, function (err) {
+            let articleUpdateQuery = 'UPDATE articles SET article_title = ?, article_subtitle = ?, article_date = NOW(), article_content = ?, article_image_filename = ?, article_image_class = ? WHERE article_tab = ?';
+            database.execute(articleUpdateQuery, [req.body.article_title, req.body.article_subtitle, req.body.article_content, req.body.article_image_filename, req.body.article_image_class, req.body.article_tab], function (err) {
                 if (err) {
                     return res.status(500).json({'status': 'Database error', 'errors': err});
                 } else {
