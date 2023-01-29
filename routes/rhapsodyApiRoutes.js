@@ -22,7 +22,7 @@ module.exports = function(app) {
     .post(usersController.add_user);
 
     app.route('/api/user/:userId')
-    .get(usersController.get_users)
+    .get(usersController.get_user)
     .put(usersController.update_user)
     .delete(usersController.delete_user);
 
