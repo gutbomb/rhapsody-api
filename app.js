@@ -5,8 +5,7 @@ const express = require('express'),
     appConfig = require('./appConfig.js'),
     port = appConfig.appPort,
     bodyParser = require('body-parser'),
-    bearerToken = require('express-bearer-token'),
-    cors = require('cors');
+    bearerToken = require('express-bearer-token');
     
 if(appConfig.useSSL) {
     const sslOptions = {
@@ -15,14 +14,16 @@ if(appConfig.useSSL) {
     };
 }
 
-let corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200
-}
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors(corsOptions));
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    next();
+});
 app.use(bearerToken());
 
 
