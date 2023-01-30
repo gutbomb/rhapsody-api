@@ -16,7 +16,7 @@ if(appConfig.useSSL) {
 }
 
 app.use(cors({
-    origin: 'https://rhapsodyfiber.com'
+    origin: '*'
 }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
